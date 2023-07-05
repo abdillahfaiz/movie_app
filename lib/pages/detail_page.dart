@@ -34,7 +34,13 @@ class _DetailPageState extends State<DetailPage> {
           FutureBuilder<MovieResponseModel>(
             future: Repostitory().getDetailMovie(),
             builder: ((context, snapshot) {
-              if (snapshot.data == null) {
+              if (snapshot.hasError) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Error : ${snapshot.error}"),
+                  backgroundColor: Colors.redAccent,
+                ));
+              }
+              else if (snapshot.data == null) {
                 return Container();
               } else {
                 return Stack(
@@ -44,16 +50,21 @@ class _DetailPageState extends State<DetailPage> {
                       child: Image.network(snapshot.data!.poster,
                           fit: BoxFit.cover),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 28, left: 28, top: 69),
+                     Padding(
+                      padding: const EdgeInsets.only(right: 28, left: 28, top: 69),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
+                          InkWell(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
                           ),
-                          Icon(
+                          const Icon(
                             Icons.more_horiz,
                             color: Colors.white,
                           )
@@ -112,7 +123,7 @@ class _DetailPageState extends State<DetailPage> {
                           const SizedBox(
                             height: 8.0,
                           ),
-                          Rating(rating: snapshot.data!.imdbRating),
+                          Rating(rating: '${snapshot.data!.imdbRating} IMDb'),
                           const SizedBox(
                             height: 16.0,
                           ),
@@ -182,14 +193,14 @@ class _DetailPageState extends State<DetailPage> {
                                 itemBuilder: (context, index) {
                                   final data = snapshot.data!.actors[index];
                                   return Container(
-                                    margin: EdgeInsets.only(right: 12),
+                                    margin: const EdgeInsets.only(right: 12),
                                     child: Column(
                                       children: [
                                         Container(
                                             width: 72,
                                             height: 72,
                                             child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   Radius.circular(10.0),
                                                 ),
                                                 child: Image.network(
@@ -218,6 +229,7 @@ class _DetailPageState extends State<DetailPage> {
                   ],
                 );
               }
+              return Container();
             }),
           ),
         ],
